@@ -1,0 +1,235 @@
+/* Overture: Opera One look for Vivaldi. Sizes and dark colours were measured in Opera One 140.
+   Tab geometry comes from layout.js; everything that depends on it is under #browser[data-ovt-layout],
+   so if Vivaldi's internals change its own accordion look stays intact. */
+#browser {
+  --ovt-ease: cubic-bezier(.2, .8, .2, 1);
+  --ovt-island: color-mix(in srgb, var(--colorFg) 16%, transparent);
+  --ovt-active: color-mix(in srgb, var(--colorFg) 27%, transparent);
+  --ovt-hover: color-mix(in srgb, var(--colorFg) 10%, transparent);
+  --ovt-sep: color-mix(in srgb, var(--colorFg) 19%, transparent);
+  --ovt-line: color-mix(in srgb, var(--colorFg) 14%, transparent);
+}
+
+/* ---- Window: Opera One's dark gradient, with the toolbar as a rounded translucent panel ---- */
+#browser.theme-id-overture-dark {
+  background: linear-gradient(90deg, #020205 0, #04040a 6%, #06060f 12.5%, #080815 18.5%, #0b0b1d 24.7%, #100f25 31%,
+    #171431 36%, #1c1837 40%, #2c234f 46.5%, #2c234c 51.7%, #1c152d 57%, #100c19 62%, #0e0a15 67.5%, #0f0b15 73.5%,
+    #110d18 78%, #17111e 85%, #15101b 91%, #0a080c 100%) !important;
+}
+#browser.theme-id-overture-dark :is(#header, #main, #main > .mainbar, #main > .inner) { background: transparent !important; }
+#browser:is(.theme-id-overture-dark, .theme-id-overture-light) .toolbar-addressbar {
+  height: 39px;
+  background: color-mix(in srgb, var(--colorFg) 10%, transparent) !important;
+  border-radius: 8px;
+}
+#browser:is(.theme-id-overture-dark, .theme-id-overture-light) .toolbar-addressbar .UrlBar-AddressField { background: transparent; box-shadow: none; }
+#browser:is(.theme-id-overture-dark, .theme-id-overture-light) .toolbar-addressbar .UrlBar-AddressField:focus-within { background: color-mix(in srgb, var(--colorFg) 8%, transparent); }
+
+/* ---- Tab bar: 40 px, flush with the top edge ---- */
+#browser[data-ovt-layout].tabs-top :is(#header, .tabbar-wrapper, #tabs-tabbar-container) { height: 40px !important; min-height: 40px !important; max-height: 40px !important; justify-content: flex-start !important; }
+#browser[data-ovt-layout].tabs-top :is(#tabs-tabbar-container, #tabs-container) { padding-top: 0 !important; margin-top: 0 !important; }
+#browser[data-ovt-layout].tabs-top #tabs-container { height: 40px !important; align-items: flex-start; }
+#browser[data-ovt-layout].tabs-top #tabs-container > .resize { height: 40px; align-self: flex-start; }
+#browser[data-ovt-layout].tabs-top #tabs-container .tab-strip { height: 40px; }
+#browser[data-ovt-layout].tabs-top #tabs-container > :is(.toolbar, button.vivaldi) { margin-top: 3px; height: 28px; }
+#browser[data-ovt-layout].tabs-top #tabs-container > button.vivaldi .expand-arrow { display: none; }
+#browser[data-ovt-layout] .toolbar-tabbar-after .newtab .ToolbarButton-Button svg {
+  width: 18px; height: 18px; padding: 2px; box-sizing: border-box; border-radius: 50%;
+  background: color-mix(in srgb, var(--colorFg) 22%, transparent);
+}
+/* Opera's search-tabs glyph on Vivaldi's tabs button */
+#browser .toolbar-tabbar-after button[data-name="TabButton"] .button-icon svg { visibility: hidden; }
+#browser .toolbar-tabbar-after button[data-name="TabButton"] .button-icon {
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%23000' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M2 4h14M2 9h5M2 14h5M14.2 13.7l2.3 2.3'/%3E%3Ccircle cx='12.2' cy='11.2' r='3.3'/%3E%3C/svg%3E") center / 17px no-repeat;
+}
+
+/* ---- Tabs ---- */
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-position .tab {
+  position: relative;
+  min-height: 0; max-height: none; height: 100%;
+  border-radius: 6px !important;
+  box-shadow: none !important; /* Vivaldi paints stack colour as a side shadow */
+  background: transparent !important;
+  color: var(--colorFg) !important;
+  transition: none;
+}
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-position .tab:hover:not(.active) { background: var(--ovt-hover) !important; }
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-position .tab.active { background: var(--ovt-active) !important; }
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-header { height: 100%; font-size: 12.5px; padding-left: 4px; }
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab .title { color: var(--colorFg); }
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab:not(:hover) .close { display: none; } /* close only on hover */
+#browser[data-ovt-layout] #tabs-container .tab-strip :is(.svg-tab-stack, .stack-counter, .tab-group-indicator) { display: none; }
+
+/* separators: not next to the active or hovered tab, not where an island starts.
+   Never use :has(), "+ *" or :first-child above a tab: each made every hover or tab switch restyle the whole strip. */
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-position .tab::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 6px auto 6px 0 !important;
+  width: 1px !important; height: auto !important;
+  border: 0; border-radius: 0 !important;
+  background: var(--ovt-sep) !important;
+  mask-image: none !important; /* Vivaldi masks the active tab's pseudo-elements into corner curves */
+  pointer-events: none;
+}
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-position .tab:is(.active, :hover, .tab-first-in-group, .tab-accordion)::before,
+#browser[data-ovt-layout] #tabs-container .tab-strip [data-ovt-nosep] .tab::before { opacity: 0; } /* set by overture.js */
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-position .tab::after { display: none !important; }
+
+/* ---- Islands: Vivaldi's toggle element is the container behind the island's tabs ---- */
+#browser[data-ovt-layout] #tabs-container .tab-strip .accordion-toggle-arrow {
+  box-sizing: border-box;
+  opacity: 1 !important; /* Vivaldi hides it while dragging */
+  background: var(--ovt-island) !important;
+  border: 0; border-radius: 8px !important;
+  width: var(--Width) !important; max-width: none !important; min-width: 0;
+  padding: 0; margin: 0;
+  z-index: 0;
+}
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-position:not(.accordion-toggle-arrow) { z-index: max(1, var(--ZIndex)); background: transparent !important; }
+#browser[data-ovt-layout] #tabs-container .tab-strip .accordion-toggle-arrow > * { display: none; }
+/* handle: 6 x 24 px, 6 px in */
+#browser[data-ovt-layout] #tabs-container .tab-strip .accordion-toggle-arrow::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 6px auto auto 6px !important;
+  width: 6px !important; height: 24px !important;
+  border-radius: 3px;
+  background: var(--stackColorBg, #8b8b99);
+}
+/* collapsed island holding the active tab: two stack bars */
+#browser[data-ovt-layout] #tabs-container .tab-strip .accordion-toggle-arrow.closed.active::after {
+  content: '';
+  position: absolute; right: 6px; top: 6px; width: 10px; height: 24px;
+  background:
+    linear-gradient(color-mix(in srgb, var(--colorFg) 30%, transparent) 0 0) 0 50% / 4px 24px no-repeat,
+    linear-gradient(color-mix(in srgb, var(--colorFg) 25%, transparent) 0 0) 6px 50% / 4px 20px no-repeat;
+  pointer-events: none;
+}
+/* pill: the stack tab lies invisibly over the container, so drag and drop onto it keeps working */
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-wrapper.accordion:not(.active) .tab { opacity: 0 !important; }
+
+/* Opera's saturated island colours */
+#browser .tab-position.color2 { --stackColorBg: #3d8bff !important; }
+#browser .tab-position.color3 { --stackColorBg: #f0384f !important; }
+#browser .tab-position.color4 { --stackColorBg: #ffc531 !important; }
+#browser .tab-position.color5 { --stackColorBg: #3ee68f !important; }
+#browser .tab-position.color6 { --stackColorBg: #e8416d !important; }
+#browser .tab-position.color7 { --stackColorBg: #5c2bff !important; }
+#browser .tab-position.color8 { --stackColorBg: #22d3e6 !important; }
+#browser .tab-position.color9 { --stackColorBg: #fa7650 !important; }
+
+/* ---- Tab Traces: 2 px, below the tab, inset 5 px. Brightness from overture.js ---- */
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-wrapper::after {
+  content: '';
+  position: absolute; left: 5px; right: 5px; bottom: -5px; height: 2px;
+  background: var(--colorFg);
+  opacity: var(--ovt-trace, 0);
+  pointer-events: none;
+}
+#browser[data-ovt-layout] #tabs-container .tab-strip .tab-wrapper:is(.active, .accordion)::after { opacity: 0; }
+
+/* ---- Sidebar: 48 px, 32 px buttons on a 40 px pitch, icons on a 20 px canvas ---- */
+/* The hosts' children live in shadow roots, so to Vivaldi's CSS they look :empty and get hidden. */
+#switch .ovt-ws-host, #browser .ovt-host { display: block !important; flex: none; }
+/* The revealed sidebar and the tab bar are window-drag regions. Vivaldi exempts its own buttons, but its CSS
+   can't reach into shadow roots, so without this Windows takes the clicks (synthetic test events don't show it). */
+#switch .ovt-ws-host, .ovt-ws, .ovt-ws-btn, .ovt-pop, .ovt-pop *, .ovt-toast { app-region: no-drag; }
+#switch { width: 48px !important; min-width: 48px; flex: none; }
+/* Vivaldi computes a 41 px bar in JS; closed and floating panels take their width and offset from it. */
+#browser #panels-container:is(.icons, .overlay) { width: 48px !important; --controlsWidth: 48px !important; }
+#browser #panels-container.left.overlay #panels > .panel-group { left: 48px !important; }
+#switch button[data-name^="WEBPANEL_"][title^="ChatGPT"] img { background: #fff; border-radius: 5px; } /* its favicon is black */
+#switch .toolbar-panel { width: 48px; }
+#switch .toolbar-panel > .button-toolbar:not(.toolbar-spacer-flexible, .toolbar-divider) {
+  width: 48px !important; height: 40px !important; min-height: 40px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+}
+#switch .toolbar-panel > .button-toolbar > .ToolbarButton-Button { flex: none; width: 32px !important; height: 32px !important; padding: 0 !important; border-radius: 8px; }
+#switch .toolbar-panel > .button-toolbar .button-icon { width: 20px; height: 20px; padding: 0; margin: 0; }
+#switch .toolbar-panel > .button-toolbar .button-icon :is(img, svg) { width: 20px !important; height: 20px !important; max-width: none; max-height: none; }
+#switch .toolbar-panel > .toolbar-spacer-flexible { visibility: hidden; min-height: 8px; }
+.ovt-ws { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 48px; padding: 6px 0 4px; }
+.ovt-ws-btn {
+  all: unset;
+  box-sizing: border-box; flex: none;
+  width: 32px; height: 32px; border-radius: 8px;
+  display: grid; place-items: center;
+  color: var(--colorFg);
+  app-region: no-drag;
+  transition: background 150ms, color 150ms;
+}
+.ovt-ws-btn:hover { background: var(--ovt-hover); }
+.ovt-ws-btn:focus-visible { outline: 2px solid #3d9ff5; }
+.ovt-ws-btn.active { background: #3d9ff5; color: #fff; }
+.ovt-ws-btn.drop { outline: 2px solid #3d9ff5; background: color-mix(in srgb, #3d9ff5 35%, transparent); }
+.ovt-ws-btn > * { pointer-events: none; }
+.ovt-icon { flex: none; width: 20px; height: 20px; background: currentColor; mask: center / contain no-repeat; }
+.ovt-emoji { flex: none; width: 18px; font: 18px/1 'Segoe UI Emoji', system-ui; text-align: center; }
+/* auto-hidden sidebar: flush with the window's left and bottom edge, below the toolbar (Vivaldi insets it 6 px) */
+#browser .auto-hide-wrapper.left { left: 0 !important; top: 0 !important; bottom: 0 !important; height: auto !important; border-radius: 0 8px 8px 0; }
+#browser.tabs-top.address-top .auto-hide-wrapper.left { top: 80px !important; }
+#browser.auto-hide .auto-hide-wrapper.left > div { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+/* The tab-bar workspace button stays (Overture drives it), just out of sight. */
+#browser #tabs-container .toolbar-tabbar-before .tabbar-workspace-button {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;
+}
+body.ovt-ghost .ToolbarButtonPopup-DefaultStyles { opacity: 0 !important; pointer-events: none !important; }
+body.ovt-drag-side #browser .auto-hide-wrapper.left { transform: none !important; pointer-events: auto !important; }
+body.ovt-island-open #browser .tooltip { display: none !important; }
+body.ovt-dragging webview { pointer-events: none !important; }
+
+/* ---- Popups: tab search, island list, island menu, toast ---- */
+.ovt-pop {
+  position: fixed; z-index: 1000;
+  background: var(--colorBgIntense, var(--colorBg)); color: var(--colorFg);
+  border-radius: 12px;
+  box-shadow: 0 14px 40px rgb(0 0 0 / .42), 0 0 0 1px var(--ovt-line);
+  font: 13px/1.3 system-ui, sans-serif;
+  animation: ovt-pop-in 140ms var(--ovt-ease);
+}
+.ovt-pop[hidden] { display: none; }
+@keyframes ovt-pop-in { from { opacity: 0; transform: translateY(-6px) scale(.98); } }
+.ovt-search { top: 44px; right: 14px; width: min(560px, calc(100vw - 28px)); max-height: min(70vh, 640px); display: flex; flex-direction: column; overflow: hidden; }
+.ovt-search input { all: unset; padding: 13px 16px; font-size: 15px; border-bottom: 1px solid var(--ovt-line); }
+.ovt-results { overflow-y: auto; padding: 6px; }
+.ovt-results, .ovt-island-list, .ovt-sub { scrollbar-width: thin; scrollbar-color: var(--ovt-sep) transparent; }
+.ovt-head { padding: 9px 10px 4px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; opacity: .55; }
+.ovt-empty { padding: 14px 10px; opacity: .6; }
+.ovt-row { display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 10px; border-radius: 8px; outline: none; }
+.ovt-row.sel, .ovt-island-list .ovt-row:hover { background: var(--ovt-active); }
+.ovt-row img { width: 16px; height: 16px; flex: none; }
+.ovt-title { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ovt-meta { flex: none; max-width: 40%; font-size: 11px; opacity: .55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ovt-x { all: unset; flex: none; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; opacity: 0; }
+.ovt-row:hover .ovt-x, .ovt-row.sel .ovt-x { opacity: .6; }
+.ovt-x:hover { opacity: 1 !important; background: var(--ovt-active); }
+.ovt-island-list { width: 300px; max-height: 60vh; overflow-y: auto; padding: 6px; }
+.ovt-close-island { all: unset; display: block; box-sizing: border-box; width: 100%; margin-top: 4px; padding: 8px 10px; border-top: 1px solid var(--ovt-line); color: #ff6b6b; }
+.ovt-close-island:hover { background: var(--ovt-hover); }
+.ovt-menu { min-width: 230px; padding: 6px; outline: none; }
+.ovt-mi {
+  all: unset;
+  box-sizing: border-box; position: relative; width: 100%;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 8px 10px; border-radius: 8px; white-space: nowrap;
+}
+.ovt-mi:hover, .ovt-mi:focus-visible { background: var(--ovt-active); }
+.ovt-danger { color: #ff6b6b; }
+.ovt-chev { opacity: .6; }
+/* lingers briefly, so a diagonal move into it can cross the items below */
+.ovt-sub { visibility: hidden; transition: visibility 0s linear .45s; position: absolute; left: calc(100% + 8px); top: -6px; min-width: 200px; max-height: 60vh; padding: 6px; animation: none; }
+.ovt-flip .ovt-sub { left: auto; right: calc(100% + 8px); }
+.ovt-has-sub:hover > .ovt-sub, .ovt-has-sub:focus-within > .ovt-sub { visibility: visible; transition-delay: 0s; }
+.ovt-has-sub:hover::after { content: ''; position: absolute; inset: 0 -16px; } /* keeps the hover across the gap to the submenu */
+.ovt-sub { z-index: 1; }
+.ovt-sub .ovt-mi { justify-content: flex-start; }
+.ovt-drag { padding: 6px 10px; pointer-events: none; animation: none; }
+.ovt-drop-line { position: fixed; z-index: 1000; width: 2px; height: 36px; background: #3d9ff5; pointer-events: none; }
+.ovt-drop-line[hidden] { display: none; }
+.ovt-toast { position: fixed; left: 50%; bottom: 24px; translate: -50% 0; z-index: 1000; max-width: 520px; padding: 12px 16px; border-radius: 12px; background: var(--colorBgIntense, var(--colorBg)); color: var(--colorFg); box-shadow: 0 10px 30px rgb(0 0 0 / .4), 0 0 0 1px var(--ovt-line); font: 13px/1.4 system-ui, sans-serif; cursor: pointer; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ovt-pop { animation: none !important; }
+}
